@@ -1,0 +1,8 @@
+pip weasyprint install
+python-pptx
+cairosvg
+openpyxl
+svglib
+reportlab
+
+gtk3
