@@ -1,8 +1,8 @@
 # NPI-Gen
 New Product Introduction Presentation Generator
 
-pip install weasyprint
-pip install python-pptx
-pip install openpyxl
-pip install svglib
-pip install reportlab
+pip install weasyprint\n
+pip install python-pptx\n
+pip install openpyxl\n
+pip install svglib\n
+pip install reportlab\n
