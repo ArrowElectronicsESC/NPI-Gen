@@ -1,7 +1,7 @@
 # NPI-Gen
 New Product Introduction Presentation Generator
 
-###Dependencies
+###### Dependencies
 ```
 pip install weasyprint
 pip install python-pptx
