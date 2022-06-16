@@ -193,6 +193,15 @@ def writeOPNLinkTable(slide, col, data_in):
                 aux_link.text = aux;
                 aux_link.hyperlink.address = val;
 
+def verifyLinkLanguage(URL):
+    try:
+        new_URL = URL.replace("/es-mx/", "/en/");
+    except:
+        new_URL = URL;
+        print("WARNING: Could not modify the Language on the following text <{}>".format(URL));
+
+    return new_URL;
+
 def putData(slide, shape, name, data):
     for paragraph in shape.text_frame.paragraphs:
         for run in paragraph.runs:
@@ -246,11 +255,11 @@ def putData(slide, shape, name, data):
                                  data['OPNTableColumn1']);
 
                     writeOPNTable(slide, 0, data['OPNTableColumn1']);
-                    writeOPNLinkTable(slide, 0, data['OPNTableColumn1Link']);
+                    writeOPNLinkTable(slide, 0, verifyLinkLanguage(data['OPNTableColumn1Link']));
                     writeOPNTable(slide, 1, data['OPNTableColumn2']);
-##                    writeOPNLinkTable(slide, 1, data['OPNTableColumn2Link']);
+##                    writeOPNLinkTable(slide, 1, verifyLinkLanguage(data['OPNTableColumn2Link']));
                     writeOPNTable(slide, 2, data['OPNTableColumn3']);
-                    writeOPNLinkTable(slide, 2, data['OPNTableColumn3Link']);
+                    writeOPNLinkTable(slide, 2, verifyLinkLanguage(data['OPNTableColumn3Link']));
                     formatOPNTable(slide)
 
                 deleteShape(shape);
@@ -261,7 +270,7 @@ def putData(slide, shape, name, data):
                 aux_mask = aux + "Mask";
 ##                print(aux_mask)
                 run.text = "{}".format(data[aux_mask]);
-                run.hyperlink.address = data[aux];
+                run.hyperlink.address = verifyLinkLanguage(data[aux]);
 
             elif name.find("Text") >= 0:
 ##                        aux = run.text;
