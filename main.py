@@ -8,6 +8,8 @@ import openpyxl
 
 MAX_ROWS = 6;
 global_AUX = None
+Separation_Char = 'Ow-';
+EmptySpace_Char = '<>'
 
 def get_column_letter(column_index):
     """Return the column letter for a column index.
@@ -20,7 +22,7 @@ def get_column_letter(column_index):
     return column_letter
 
 def getExcelData(workbook, sheetName):
-    pxl_doc = openpyxl.load_workbook(workbook)
+    pxl_doc = openpyxl.load_workbook(workbook, data_only = True)
     sheet = pxl_doc[sheetName]
     excelData = {}
     # iterate over columns in the first row
@@ -60,6 +62,19 @@ def fitImage(h_n, w_n, h, w):
 
     return int(h_n), int(w_n);
 
+def fitBackgroundImage(h_n, w_n, h, w):
+    scale = w/w_n;
+    h_n = h_n*scale;
+    w_n = w_n*scale;
+
+    if h_n < h:
+        scale = h/h_n;
+        h_n = h_n*scale;
+        w_n = w_n*scale;
+        
+
+    return int(h_n), int(w_n);
+
 def putImage(slide, shape, source, fmt):
     global global_AUX
     x, y, h, w = getShapeProperties(shape)
@@ -86,6 +101,10 @@ def putImage(slide, shape, source, fmt):
         
         slide.shapes[-1].top = int(y - h/2);
 
+    elif source.find('background') > 0:
+        slide.shapes[-1].height, slide.shapes[-1].width = fitBackgroundImage(slide.shapes[-1].height, slide.shapes[-1].width, h, w);
+        slide.shapes[-1].top = h - slide.shapes[-1].height;
+        
     else:
         slide.shapes[-1].height, slide.shapes[-1].width = fitImage(slide.shapes[-1].height, slide.shapes[-1].width, h, w);
 
@@ -118,23 +137,22 @@ def formatOPNTable(slide):
                 
 def drawOPNTable(slide, shape, OPN):
     global MAX_ROWS
+    global Separation_Char
     x, y, h, w = getShapeProperties(shape)
-    OPNs = OPN.split("/");
+    OPNs = OPN.split(Separation_Char);
 
     if len(OPNs) > MAX_ROWS:
-        print("More than <{}> P/Ns were identified, taking the first <{}> elements to preserve the shape".format(MAX_ROWS,MAX_ROWS))
+        print("More than <{0}> P/Ns were identified, taking the first <{0}> elements to preserve the shape".format(MAX_ROWS))
         OPNs = OPNs[0:MAX_ROWS];
     
-    slide.shapes.add_table(rows = len(OPNs) + 1,
+    slide.shapes.add_table(rows = len(OPNs),
                            cols = 3,
                            left = x,
                            top = y,
                            width = w,
                            height = int(len(OPNs) + 1*h/MAX_ROWS));
 
-    writeOPNTableHeader(slide);
-
-    deleteShape(shape);
+##    writeOPNTableHeader(slide);
 
 def writeOPNTableHeader(slide):
     slide.shapes[-1].table.cell(0, 0).text = "OPN";
@@ -143,13 +161,37 @@ def writeOPNTableHeader(slide):
     
 
 def writeOPNTable(slide, col, data_in):
-    data = data_in.split("/");
+    global Separation_Char
+    data = data_in.split(Separation_Char);
 
     if len(data) > MAX_ROWS:
         data = data[0:MAX_ROWS];
 
     for i, val in enumerate(data):
-        slide.shapes[-1].table.cell(i + 1, col).text = val;
+        slide.shapes[-1].table.cell(i, col).text = val;
+
+def writeOPNLinkTable(slide, col, data_in):
+    global Separation_Char
+    global EmptySpace_Char
+    global global_AUX
+    
+    if not type(data_in) == type(None):
+        data = data_in.split(Separation_Char);
+
+        if not len(data) == 0:
+            print("Adding Links")
+            if len(data) > MAX_ROWS:
+                data = data[0:MAX_ROWS];
+
+            for i, val in enumerate(data):
+                if val == EmptySpace_Char:
+                    continue
+
+                aux = slide.shapes[-1].table.cell(i+1, col).text;
+                slide.shapes[-1].table.cell(i+1, col).text = "";
+                aux_link = slide.shapes[-1].table.cell(i+1, col).text_frame.paragraphs[0].add_run();
+                aux_link.text = aux;
+                aux_link.hyperlink.address = val;
 
 def putData(slide, shape, name, data):
     for paragraph in shape.text_frame.paragraphs:
@@ -158,10 +200,21 @@ def putData(slide, shape, name, data):
             aux = run.text;
 
             if name.find("Image") > 0:
-                if name.find("ogo") > 0:
+                if name.find("Logo") >= 0:
                     sourceImage = "images//logo//{}".format(data[name][0:data[name].rfind(".")]);
+
+                elif name.find("Figure") >= 0:
+                    sourceImage = "images//figures//{}".format(data[name][0:data[name].rfind(".")]);
+
+                elif name.find("Background") >= 0:
+                    sourceImage = "images//background//{}".format(data[name][0:data[name].rfind(".")]);
+
+                elif name.find("App") >= 0:
+                    sourceImage = "images//app//{}".format(data[name][0:data[name].rfind(".")]);
+
                 else:
-                    sourceImage = "images//{}".format(data[name][0:data[name].rfind(".")]);
+                    print("WARNING: No folder found for <{}>".format(data[name][0:data[name].rfind(".")]))
+##                    sourceImage = "images//{}".format(data[name][0:data[name].rfind(".")]);
                     
                 if data[name].find("svg") > 0:
                     convertSVG2PNG(sourceImage);
@@ -186,20 +239,29 @@ def putData(slide, shape, name, data):
                     print("No format for <{}> detected".format(name));
 
             elif name.find("Table") > 0:
-                drawOPNTable(slide,
-                             shape,
-                             data['OPNTable']);
 
-                writeOPNTable(slide, 0, data['OPNTable']);
-                writeOPNTable(slide, 1, data['OPNTableDescription']);
-                writeOPNTable(slide, 2, data['OPNTablePackage']);
-                formatOPNTable(slide)
+                if data['OPNTable'].find("Y") == 0:
+                    drawOPNTable(slide,
+                                 shape,
+                                 data['OPNTableColumn1']);
+
+                    writeOPNTable(slide, 0, data['OPNTableColumn1']);
+                    writeOPNLinkTable(slide, 0, data['OPNTableColumn1Link']);
+                    writeOPNTable(slide, 1, data['OPNTableColumn2']);
+##                    writeOPNLinkTable(slide, 1, data['OPNTableColumn2Link']);
+                    writeOPNTable(slide, 2, data['OPNTableColumn3']);
+                    writeOPNLinkTable(slide, 2, data['OPNTableColumn3Link']);
+                    formatOPNTable(slide)
+
+                deleteShape(shape);
 
 
             elif name.find("Link") >= 0:
 ##                        aux = run.text;
-                run.text = "{} - {}".format(data["Supplier"], data["PartNumber"]);
-                run.hyperlink.address = data[name];
+                aux_mask = aux + "Mask";
+##                print(aux_mask)
+                run.text = "{}".format(data[aux_mask]);
+                run.hyperlink.address = data[aux];
 
             elif name.find("Text") >= 0:
 ##                        aux = run.text;
@@ -224,8 +286,7 @@ def putData(slide, shape, name, data):
 
 data = getExcelData("./NPI_TEMPLATE_FILL_Test.xlsx", 'TEMPLATE_1_FILL')
 
-prs = Presentation("Template 99.pptx")
-
+prs = Presentation("Template-{}.pptx".format(data['Template']))
 # text_runs will be populated with a list of strings,
 # one for each text run in presentation
 text_runs = []
@@ -272,12 +333,13 @@ for slide in prs.slides:
 ####        print("{}".format(dict_template[i]['info'][j]))
 
 
-list_shapeProp = []
+
 for i in dict_template:
     for j in dict_template[i]['info']:
         print(j)
         if dict_template[i]['info'][j]['Multiples']:
             MaxArea = 0;
+            list_shapeProp = []
             for shape_num in dict_template[i]['info'][j]['objects']:
                 print(shape_num)
                 list_shapeProp.append([])
@@ -303,4 +365,6 @@ for i in dict_template:
             for shape_num in dict_template[i]['info'][j]['objects']:
                 x, y, h, w, dict_template[i]['info'][j]['objects'][shape_num] = putData(dict_template[i]['object'], dict_template[i]['info'][j]['objects'][shape_num], j, data);
 
-prs.save("testing1.pptx")
+Prs_Title = "NPI-{}-{}.pptx".format(data['Supplier'], data['PartNumber']);
+print("Saving <{}>".format(Prs_Title));
+prs.save(Prs_Title)
