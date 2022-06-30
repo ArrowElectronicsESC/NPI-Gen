@@ -1,3 +1,5 @@
+import collections
+import collections.abc
 import os
 import pptx
 from pptx import Presentation
