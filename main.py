@@ -112,6 +112,8 @@ def putImage(slide, shape, source, fmt):
             slide.shapes[-1].top = int(y - h/2);
 
         elif source.find('background') > 0:
+            ## Could compress  background image before processing it
+            
             slide.shapes[-1].height, slide.shapes[-1].width = fitBackgroundImage(slide.shapes[-1].height, slide.shapes[-1].width, h, w);
             slide.shapes[-1].top = h - slide.shapes[-1].height;
             
@@ -390,6 +392,9 @@ for i in dict_template:
             for shape_num in dict_template[i]['info'][j]['objects']:
                 x, y, h, w, dict_template[i]['info'][j]['objects'][shape_num] = putData(dict_template[i]['object'], dict_template[i]['info'][j]['objects'][shape_num], j, data);
 
+
 Prs_Title = "NPI-{}-{}.pptx".format(data['Supplier'], data['PartNumber']);
+Prs_Title = Prs_Title.replace("/", "-");
+
 print("Saving <{}>".format(Prs_Title));
 prs.save(Prs_Title)
