@@ -5,6 +5,7 @@ import pptx
 from pptx import Presentation
 from pptx.util import Inches, Pt
 import pptx.enum.shapes as pptx_types
+from PIL import Image
 
 from svg2png_svglib import convertSVG2PNG
 
@@ -12,8 +13,8 @@ import openpyxl
 
 MAX_ROWS = 6;
 global_AUX = None
-Separation_Char = 'Ow-';
-EmptySpace_Char = '<>'
+Separation_Char = None;
+EmptySpace_Char = None;
 
 os.system("cls")
 
@@ -31,6 +32,8 @@ def get_column_letter(column_index):
     return column_letter
 
 def getExcelData(workbook, sheetName):
+    global Separation_Char
+    global EmptySpace_Char
     pxl_doc = openpyxl.load_workbook(workbook, data_only = True)
     sheet = pxl_doc[sheetName]
     excelData = {}
@@ -39,6 +42,11 @@ def getExcelData(workbook, sheetName):
         # get column letter
         col = get_column_letter(i)
         excelData[sheet.cell(row=1, column=i).value] = sheet.cell(row=2, column=i).value
+
+    ## Used for sinchronizaton over variables within the excel file
+    sheet = pxl_doc["CONST"];
+    Separation_Char = sheet.cell(row = 1, column = 2).value;
+    EmptySpace_Char = sheet.cell(row = 2, column = 2).value;
 
     return excelData
 
@@ -84,6 +92,13 @@ def fitBackgroundImage(h_n, w_n, h, w):
 
     return int(h_n), int(w_n);
 
+def compressImage(f_name, dpi = 96):
+    im = Image.open("{}".format(f_name));
+    f_name_only = f_name[0:f_name.find(".")];
+    im.save("{}".format(f_name), dpi=(dpi,dpi));
+
+    return;
+
 def putImage(slide, shape, source, fmt):
     global global_AUX
     x, y, h, w = getShapeProperties(shape)
@@ -91,7 +106,11 @@ def putImage(slide, shape, source, fmt):
     img = source + "." + fmt;
 
     if os.path.exists(img):
+        if fmt == 'jpg':
+            compressImage(img);
+                
         slide.shapes.add_picture(img, x, y);
+            
 
         if source.find('logo') > 0:
             x, y, h, w = getShapeProperties(slide.shapes[-1]);
