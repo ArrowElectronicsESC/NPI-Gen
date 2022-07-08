@@ -10,6 +10,7 @@ from PIL import Image
 from svg2png_svglib import convertSVG2PNG
 
 import openpyxl
+from create_email import func_genSubmissionEmail, func_genClientEmail
 
 MAX_ROWS = 6;
 global_AUX = None
@@ -417,3 +418,6 @@ Prs_Title = Prs_Title.replace("/", "-");
 
 print("Saving <{}>".format(Prs_Title));
 prs.save(Prs_Title)
+
+func_genClientEmail(data, Prs_Title)
+func_genSubmissionEmail(data, Prs_Title)
