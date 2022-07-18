@@ -49,16 +49,27 @@ def func_genSubmissionEmail(data, pptx_name):
 
     outlook = win32com.client.Dispatch("Outlook.Application").GetNamespace("MAPI")
 
-    msg = outlook.OpenSharedItem(r"C:\Users\146294\OneDrive - Arrow Electronics, Inc\Documents\Arrow\Internal Jobs\NPI_Gen\NPI Generator Tool v15\SubmissionEmail_Template.msg")
+######====================================================================
+####    msg = outlook.OpenSharedItem(r"C:\Users\146294\OneDrive - Arrow Electronics, Inc\Documents\Arrow\Internal Jobs\NPI_Gen\NPI Generator Tool v15\SubmissionEmail_Template.msg")
+######====================================================================
+    msg = outlook.OpenSharedItem("{}\\{}".format(os.getcwd(), "SubmissionEmail_Template.msg"))
 
     msg.Subject = "{} {} - {}".format(msg.Subject, data['Supplier'], data["Title"]);
     msg.Body = msg.Body.replace("Supplier:", "Supplier: " + data['Supplier'])
     msg.Body = msg.Body.replace("Topic:", "Topic: " + data['Title'])
     msg.Body = msg.Body.replace("Application:", "Application:\n" + data['ApplicationText'])
-    msg.Attachments.Add(r"C:\Users\146294\OneDrive - Arrow Electronics, Inc\Documents\Arrow\Internal Jobs\NPI_Gen\NPI Generator Tool v15" + "\\{}".format(pptx_name));
-    msg.Attachments.Add(r"C:\Users\146294\OneDrive - Arrow Electronics, Inc\Documents\Arrow\Internal Jobs\NPI_Gen\NPI Generator Tool v15\Cust_Email.msg");
-     
-    msg.SaveAs(r"C:\Users\146294\OneDrive - Arrow Electronics, Inc\Documents\Arrow\Internal Jobs\NPI_Gen\NPI Generator Tool v15\NPI_email.msg", 9)
+
+######====================================================================
+####    msg.Attachments.Add(r"C:\Users\146294\OneDrive - Arrow Electronics, Inc\Documents\Arrow\Internal Jobs\NPI_Gen\NPI Generator Tool v15" + "\\{}".format(pptx_name));
+####    msg.Attachments.Add(r"C:\Users\146294\OneDrive - Arrow Electronics, Inc\Documents\Arrow\Internal Jobs\NPI_Gen\NPI Generator Tool v15\Cust_Email.msg");
+######====================================================================
+    msg.Attachments.Add("{}\\{}".format(os.getcwd(), pptx_name));
+    msg.Attachments.Add("{}\\{}".format(os.getcwd(), "Cust_Email.msg"));
+
+######====================================================================
+####    msg.SaveAs(r"C:\Users\146294\OneDrive - Arrow Electronics, Inc\Documents\Arrow\Internal Jobs\NPI_Gen\NPI Generator Tool v15\NPI_email.msg", 9)
+######====================================================================
+    msg.SaveAs("{}\\{}".format(os.getcwd(), "NPI_email.msg"), 3)
 
     del msg, outlook
 
@@ -71,7 +82,10 @@ def func_genClientEmail(data, pptx_name):
 
     outlook = win32com.client.Dispatch("Outlook.Application").GetNamespace("MAPI")
 
-    msg = outlook.OpenSharedItem(r"C:\Users\146294\OneDrive - Arrow Electronics, Inc\Documents\Arrow\Internal Jobs\NPI_Gen\NPI Generator Tool v15\CustomerEmail_Template.msg")
+######====================================================================
+####    msg = outlook.OpenSharedItem(r"C:\Users\146294\OneDrive - Arrow Electronics, Inc\Documents\Arrow\Internal Jobs\NPI_Gen\NPI Generator Tool v15\CustomerEmail_Template.msg")
+######====================================================================
+    msg = outlook.OpenSharedItem("{}\\{}".format(os.getcwd(), "CustomerEmail_Template.msg"))
 
     msg.Subject = "{} - {}".format(data['Supplier'], data["Title"]);
     msg.Body = msg.Body.replace("OverviewText", data['OverviewText'])
@@ -80,8 +94,10 @@ def func_genClientEmail(data, pptx_name):
 ##    msg.Body = msg.Body.replace("PageLink1", '{\field{\*\fldinst { HYPERLINK "{0}" }}{\fldrslt {{1}}}}'.format(data['PageLink1'], data['PageLink1Mask']).encode('utf-8'))
 ##    Link1 = '{\field{\*\fldinst { HYPERLINK' +  '"' + data['PageLink1'] + '"' + '}}{\fldrslt {' + data['PageLink1Mask'] + '}}}';
 ##    msg.Body = msg.Body.replace("PageLink1", Link1.encode('utf-8'))
-    msg.Attachments.Add(r"C:\Users\146294\OneDrive - Arrow Electronics, Inc\Documents\Arrow\Internal Jobs\NPI_Gen\NPI Generator Tool v15" + "\\{}".format(pptx_name));
-
+######====================================================================
+####    msg.Attachments.Add(r"C:\Users\146294\OneDrive - Arrow Electronics, Inc\Documents\Arrow\Internal Jobs\NPI_Gen\NPI Generator Tool v15" + "\\{}".format(pptx_name));
+######====================================================================
+    msg.Attachments.Add("{}\\{}".format(os.getcwd(), pptx_name));
 ##    print(msg.SenderName)
 ##    print(msg.SenderEmailAddress)
 ##    print(msg.SentOn)
@@ -105,6 +121,10 @@ def func_genClientEmail(data, pptx_name):
 
 ##    print("\n\n")
     print(msg.HTMLBody)
-     
-    msg.SaveAs(r"C:\Users\146294\OneDrive - Arrow Electronics, Inc\Documents\Arrow\Internal Jobs\NPI_Gen\NPI Generator Tool v15\Cust_email.msg", 3)
+
+######====================================================================
+####    msg.SaveAs(r"C:\Users\146294\OneDrive - Arrow Electronics, Inc\Documents\Arrow\Internal Jobs\NPI_Gen\NPI Generator Tool v15\Cust_email.msg", 3)
+######====================================================================
+    msg.SaveAs("{}\\{}".format(os.getcwd(), "Cust_email.msg"), 3)
+
 
