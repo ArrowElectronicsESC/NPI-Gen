@@ -89,6 +89,8 @@ def func_genClientEmail(data, pptx_name):
 
     msg.Subject = "{} - {}".format(data['Supplier'], data["Title"]);
 ##    print(msg.HTMLBody)
+    msg.Attachments.Add("{}\\{}".format(os.getcwd(), pptx_name));
+    msg.Attachments.Add("{}\\{}".format(os.getcwd(), data["MainFigureImage"]));
     msg.HTMLBody = msg.HTMLBody.replace("OverviewText", data['OverviewText'])
     msg.HTMLBody = msg.HTMLBody.replace("AdvantagesText", data['AdvantagesText'])
     msg.HTMLBody = msg.HTMLBody.replace("ApplicationText", data['ApplicationText'])
@@ -116,9 +118,17 @@ def func_genClientEmail(data, pptx_name):
         height_index += 1;
 
 ##    print(height_str)
-        
+
+    main_dir = os.getcwd();
+##    main_dir = main_dir.replace(" ", "%20");
+##    main_dir = main_dir.replace(",", "%2C");
+##    main_dir = main_dir.replace("\\", "/");
+    print(main_dir)
+    attachment = msg.Attachments.Add("{}\\images\\figures\\{}".format(main_dir, data['MainFigureImage']))
+    attachment.PropertyAccessor.SetProperty("http://schemas.microsoft.com/mapi/proptag/0x3712001F", "imgId1")
+    
     msg.HTMLBody = msg.HTMLBody.replace("<img width={} height={} id=\"Picture_x0020_1\" src=\"cid:image001.jpg@01D89A90.88E97900\" alt=\"Image Placeholder - Uning\">".format(width_str, height_str),
-                                        "<img width={} src=\"{}\" alt=\"{}\">".format(width_str, os.getcwd() + "\\images\\figures\\" + data['MainFigureImage'], data['Supplier']))
+                                        "<img width={} src=\'cid:{}\' alt=\'{}\'>".format(width_str, "imgId1", data['Supplier']))
     msg.HTMLBody = msg.HTMLBody.replace("<span style='color:black'>TableHere</span>",
                                         "{}".format(drawHTMLTable(data['OPNTableColumn1'], data['OPNTableColumn2'], data['OPNTableColumn3'])));
     msg.HTMLBody = msg.HTMLBody.replace("<span style='color:black'>PageLink1|PageLink2<o:p></o:p></span>",
