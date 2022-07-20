@@ -75,7 +75,7 @@ def drawHTMLTable(col_1, col_2, col_3 = None, hyper_1 = None, hyper_2 = None, hy
                 HTML_str = HTML_str + "<th width = \"70%\">{}&emsp;</th><th>{}</th>".format(table[0][i], table[1][i]);
 
             else:
-                HTML_str = HTML_str + "<td>{}&emsp;</td><td>{}</td>".format(table[0][i], table[1][i]);
+                HTML_str = HTML_str + "<td>{}&emsp;</td><td align = \"center\">{}</td>".format(table[0][i], table[1][i]);
                 
             HTML_str = HTML_str + "</tr>";
 
@@ -190,8 +190,22 @@ def func_genClientEmail(data, pptx_name):
     
     msg.HTMLBody = msg.HTMLBody.replace("<span style='color:black'>TableHere</span>",
                                         "{}".format(drawHTMLTable(col_1 = data['OPNTableColumn1'], col_2 = data['OPNTableColumn2'], col_3 = data['OPNTableColumn3'], hyper_1 = data['OPNTableColumn1Link'], hyper_3 = data['OPNTableColumn3Link'])));
-    msg.HTMLBody = msg.HTMLBody.replace("<span style='color:black'>PageLink1|PageLink2<o:p></o:p></span>",
-                                        "<a href={}>{}</a><FONT FACE=\"Calibri\"> |  </FONT><a href={}>{}</a>".format(data['PageLink1'], data['PageLink1Mask'], data['PageLink2'], data['PageLink2Mask']))
+
+    if not type(data['PageLink1']) == type(None) and not type(data['PageLink2']) == type(None):
+        msg.HTMLBody = msg.HTMLBody.replace("<span style='color:black'>PageLink1|PageLink2<o:p></o:p></span>",
+                                            "<a href={}>{}</a><FONT FACE=\"Calibri\"> |  </FONT><a href={}>{}</a>".format(data['PageLink1'], data['PageLink1Mask'], data['PageLink2'], data['PageLink2Mask']))
+
+    elif not type(data['PageLink1']) == type(None):
+        msg.HTMLBody = msg.HTMLBody.replace("<span style='color:black'>PageLink1|PageLink2<o:p></o:p></span>",
+                                            "<font><&nbsp;</font><a href={}>{}</a><font>&nbsp;></font>".format(data['PageLink1'], data['PageLink1Mask']))
+
+    elif not type(data['PageLink2']) == type(None):
+        msg.HTMLBody = msg.HTMLBody.replace("<span style='color:black'>PageLink1|PageLink2<o:p></o:p></span>",
+                                            "<font><&nbsp;</font><a href={}>{}</a><font>&nbsp;></font>".format(data['PageLink2'], data['PageLink2Mask']))
+
+    else:
+        msg.HTMLBody = msg.HTMLBody.replace("<span style='color:black'>PageLink1|PageLink2<o:p></o:p></span>","");
+
 
 ##    print(msg.HTMLBody);
 
