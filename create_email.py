@@ -138,7 +138,9 @@ def func_genSubmissionEmail(data, pptx_name):
     msg.Attachments.Add("{}\\{}".format(os.getcwd(), pptx_name));
     msg.Attachments.Add("{}\\{}".format(os.getcwd(), "{}.msg".format(pptx_name[0:pptx_name.find(".")])));
 
-    msg.SaveAs("{}\\{}".format(os.getcwd(), "Submission-{}.msg".format(pptx_name[0:pptx_name.find(".")])), 3)
+    msg_name = "{}\\{}".format(os.getcwd(), "Submission-{}.msg".format(pptx_name[0:pptx_name.find(".")]));
+    msg.SaveAs(msg_name, 3);
+    print("PROGRESS: Saving <{}>".format(msg_name));
 
     del msg, outlook
 
@@ -209,6 +211,8 @@ def func_genClientEmail(data, pptx_name):
 
 ##    print(msg.HTMLBody);
 
-    msg.SaveAs("{}\\{}".format(os.getcwd(), "{}.msg".format(pptx_name[0:pptx_name.find(".")])), 3);
+    msg_name = "{}\\{}".format(os.getcwd(), "{}.msg".format(pptx_name[0:pptx_name.find(".")]));
+    msg.SaveAs(msg_name, 3);
+    print("PROGRESS: Saving <{}>".format(msg_name));
 
     del msg, outlook
