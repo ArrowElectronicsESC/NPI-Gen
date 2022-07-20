@@ -21,3 +21,20 @@ pip install svglib
 pip install reportlab
 pip install pywin32
 ```
+
+## Inputs
+> Files which are needed for the script to run
+```
+Excel file (NPI_TEMPLATE_FILL_Test.xlsx)
+PowerPoint Template (following the name Template-xx.pptx)
+Customer Email Template (CustomerEmail_Template.msg)*
+Submission Email Template (SubmissionEmail_Template.msg)*
+```
+
+## Outputs
+> Files created by the script if succesful execution
+```
+PowerPoint file (following the format NPI-Supplier-PartNumber.pptx)
+Customer Email (following the format NPI-Supplier-PartNumber.msg)
+Submission Email (following the format Submission-NPI-Supplier-PartNumber.msg)
+```
