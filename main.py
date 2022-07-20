@@ -10,6 +10,7 @@ from PIL import Image
 from svg2png_svglib import convertSVG2PNG
 
 import openpyxl
+import create_email
 from create_email import func_genSubmissionEmail, func_genClientEmail
 
 MAX_ROWS = 6;
@@ -224,9 +225,19 @@ def writeOPNLinkTable(slide, col, data_in):
                 aux_link.text = aux;
                 aux_link.hyperlink.address = val;
 
+                if val.find("arrow.com") > 0:
+                    flag_arrow_link = True;
+
+
 def verifyLinkLanguage(URL, Header):
+##    global create_email.flag_arrow_link;
+    
     try:
         new_URL = URL.replace("/es-mx/", "/en/");
+        if new_URL.find("arrow.com") > 0:
+            print("ARROW LINK AVAAIILAABLE");
+            create_email.flag_arrow_link = True;
+            
     except:
         new_URL = URL;
         printWARN("WARNING: Could not modify the Language on the following text <{}> from <{}>".format(URL, Header));
