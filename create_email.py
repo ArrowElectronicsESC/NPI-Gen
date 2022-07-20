@@ -1,10 +1,12 @@
 import win32com.client
 import openpyxl
 import os
+##from main import flag_arrow_link
 
 dict_email = {};
 Separation_Char = None;
 EmptySpace_Char = None;
+flag_arrow_link = False;
 
 def getExcelData(workbook, sheetName):
     global Separation_Char
@@ -119,6 +121,8 @@ def drawHTMLTable(col_1, col_2, col_3 = None, hyper_1 = None, hyper_2 = None, hy
     return HTML_str;
 
 def func_genSubmissionEmail(data, pptx_name):
+    global flag_arrow_link
+    
     data = getExcelData("./NPI_TEMPLATE_FILL_Test.xlsx", 'TEMPLATE_1_FILL')
 
     outlook = win32com.client.Dispatch("Outlook.Application").GetNamespace("MAPI")
@@ -132,6 +136,12 @@ def func_genSubmissionEmail(data, pptx_name):
 
 ##    print(msg.HTMLBody);
     msg.HTMLBody = msg.HTMLBody.replace("Supplier:", "Supplier: " + data['Supplier'])
+    if flag_arrow_link:
+        msg.HTMLBody = msg.HTMLBody.replace("Arrow.com link:", "Arrow.com link:&nbsp;Yes");
+
+    else:
+        msg.HTMLBody = msg.HTMLBody.replace("Arrow.com link:", "Arrow.com link:&nbsp;No");
+        
     msg.HTMLBody = msg.HTMLBody.replace("Topic:", "Topic: " + data['Title'])
     msg.HTMLBody = msg.HTMLBody.replace("Application:", "Application:\n" + data['ApplicationText'])
 
