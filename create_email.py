@@ -196,7 +196,7 @@ def func_genClientEmail(data, pptx_name):
     attachment2.PropertyAccessor.SetProperty("http://schemas.microsoft.com/mapi/proptag/0x3712001F", "imgId2")
     
     msg.HTMLBody = msg.HTMLBody.replace("<img width={} height={} id=\"Picture_x0020_2\" src=\"cid:image001.jpg@01D89A90.88E97900\" alt=\"Image Placeholder - Uning\">".format(width_str, height_str),
-                                        "<img width={} src=\'cid:{}\' alt=\'{}\'>".format(width_str, "imgId1", data['Supplier']))
+                                        "<img height={} src=\'cid:{}\' alt=\'{}\'>".format(height_str, "imgId1", data['Supplier']))
     msg.HTMLBody = msg.HTMLBody.replace("<img width={} height={} id=\"Picture_x0020_1\" src=\"cid:image001.jpg@01D89A90.88E97900\" alt=\"Image Placeholder - Uning\">".format(width_str, height_str),
                                         "<img height={} src=\'cid:{}\' alt=\'{}\'>".format(height_str, "imgId2", data['Supplier']))
     
