@@ -269,20 +269,20 @@ def putData(slide, shape, name, data):
                     else:
                         printWARN("WARNING: No folder found for <{}>".format(data[name][0:data[name].rfind(".")]))
                         
-                    if data[name].find("svg") > 0:
+                    if data[name].lower().find("svg") > 0:
                         convertSVG2PNG(sourceImage);
                         shape = putImage(slide,
                                          shape,
                                          sourceImage,
                                          "png");
 
-                    elif data[name].find("png") > 0:
+                    elif data[name].lower().find("png") > 0:
                         shape = putImage(slide,
                                          shape,
                                          sourceImage,
                                          "png");
 
-                    elif data[name].find("jpg") > 0:
+                    elif data[name].lower().find("jpg") > 0:
                         shape = putImage(slide,
                                      shape,
                                      sourceImage,
