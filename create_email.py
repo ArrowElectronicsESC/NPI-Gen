@@ -67,10 +67,9 @@ def drawHTMLTable(col_1, col_2, col_3 = None, hyper_1 = None, hyper_2 = None, hy
     hyper.append(hyper_1);
     hyper.append(hyper_2);
     hyper.append(hyper_3);
-
-    HTML_str = "<table>";
     
     if type(col_3) == type(None):
+        HTML_str = "<table>";
         for i in range(len(table[0])):
             HTML_str = HTML_str + "<tr>";
             if i == 0:
@@ -82,6 +81,8 @@ def drawHTMLTable(col_1, col_2, col_3 = None, hyper_1 = None, hyper_2 = None, hy
             HTML_str = HTML_str + "</tr>";
 
     else:
+        HTML_str = "<table width=\"800\">";
+        HTML_str = HTML_str + "<style> td {word-wrap: break-word;} </style>";
         for i in range(len(table[0])):
             HTML_str = HTML_str + "<tr>";
             for j in range(len(table)):
@@ -154,6 +155,25 @@ def func_genSubmissionEmail(data, pptx_name):
 
     del msg, outlook
 
+def func_FMTText(text, fmt_chr):
+    flag = True;
+    
+    while True:
+        if text.find(fmt_chr) >= 0:
+            if flag:
+                text = text.replace(fmt_chr, "<b>", 1);
+                flag = False;
+
+            else:
+                text = text.replace(fmt_chr, "</b>", 1)
+                flag = True;
+
+        else:
+            break;
+        
+    return text;
+    
+
 def func_genClientEmail(data, pptx_name):
     data = getExcelData("./NPI_TEMPLATE_FILL_Test.xlsx", 'TEMPLATE_1_FILL')
 
@@ -164,7 +184,16 @@ def func_genClientEmail(data, pptx_name):
     msg.Subject = "{} - {}".format(data['Supplier'], data["Title"]);
 
     msg.Attachments.Add("{}\\{}".format(os.getcwd(), pptx_name));
-    msg.HTMLBody = msg.HTMLBody.replace("OverviewText", data['OverviewText'])
+    
+    if data['OverviewText'].find("__") >= 0:
+        if data['OverviewText'].count("__") % 2:
+##            main.printWARN("WARNING: Bold chars <\"{}\"> are not multiple of 2 in <{}>, proceeding without format".format(dict_fmt['bold'],aux));
+            
+            msg.HTMLBody = msg.HTMLBody.replace("EmailText", data['EmailText'].replace("__", ""))
+
+        else:
+            msg.HTMLBody = msg.HTMLBody.replace("EmailText", func_FMTText(data['EmailText'], "__"))
+   
     msg.HTMLBody = msg.HTMLBody.replace("AdvantagesText", data['AdvantagesText'])
     msg.HTMLBody = msg.HTMLBody.replace("ApplicationText", data['ApplicationText'])
 
