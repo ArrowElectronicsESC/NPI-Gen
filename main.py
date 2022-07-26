@@ -244,91 +244,153 @@ def verifyLinkLanguage(URL, Header):
 
     return new_URL;
 
+dict_fmt = {"bold": "__"};
+
+def func_FMTText(text, p, fmt_chr):
+    split_text = text.split(fmt_chr);
+    runs_list = [p.runs[0]];
+    
+    print(text.find(fmt_chr))
+    if text.find(fmt_chr) == 0:
+        bold_text = True;
+        split_text.pop(0);
+
+    else:
+        bold_text = False;
+
+    print(split_text)
+    for i in range(len(split_text)-1):
+        runs_list.append(p.add_run());
+
+    for i, i_run in enumerate(runs_list):
+        i_run.text = split_text[i];
+
+        if bold_text:
+            i_run.font.bold = True;
+            bold_text = False;
+
+        else:
+            bold_text = True;
+    
+##    while True:
+        
+
 def putData(slide, shape, name, data):
     global global_AUX
     
     for paragraph in shape.text_frame.paragraphs:
-        for run in paragraph.runs:
-            print("PROGRESS: Working with <{}>".format(run.text))
-            aux = run.text;
+##        for run in paragraph.runs:
+        global_AUX = paragraph
+        if len(paragraph.runs) == 0:
+            continue;
+        
+        print("PROGRESS: Working with <{}>".format(paragraph.runs[0].text))
+        run = paragraph.runs[0];
+        aux = paragraph.runs[0].text;
 
-            if not type(data[name]) == type(None):
-                if name.find("Image") > 0:
-                    if name.find("Logo") >= 0:
-                        sourceImage = "images//logo//{}".format(data[name][0:data[name].rfind(".")]);
+        if not type(data[name]) == type(None):
+            if name.find("Image") > 0:
+                if name.find("Logo") >= 0:
+                    sourceImage = "images//logo//{}".format(data[name][0:data[name].rfind(".")]);
 
-                    elif name.find("Figure") >= 0:
-                        sourceImage = "images//figures//{}".format(data[name][0:data[name].rfind(".")]);
+                elif name.find("Figure") >= 0:
+                    sourceImage = "images//figures//{}".format(data[name][0:data[name].rfind(".")]);
 
-                    elif name.find("Background") >= 0:
-                        sourceImage = "images//background//{}".format(data[name][0:data[name].rfind(".")]);
+                elif name.find("Background") >= 0:
+                    sourceImage = "images//background//{}".format(data[name][0:data[name].rfind(".")]);
 
-                    elif name.find("App") >= 0:
-                        sourceImage = "images//app//{}".format(data[name][0:data[name].rfind(".")]);
-
-                    else:
-                        printWARN("WARNING: No folder found for <{}>".format(data[name][0:data[name].rfind(".")]))
-                        
-                    if data[name].lower().find("svg") > 0:
-                        convertSVG2PNG(sourceImage);
-                        shape = putImage(slide,
-                                         shape,
-                                         sourceImage,
-                                         "png");
-
-                    elif data[name].lower().find("png") > 0:
-                        shape = putImage(slide,
-                                         shape,
-                                         sourceImage,
-                                         "png");
-
-                    elif data[name].lower().find("jpg") > 0:
-                        shape = putImage(slide,
-                                     shape,
-                                     sourceImage,
-                                     "jpg");
-                        
-                    else:
-                        printWARN("WARNING: No format for <{}> detected".format(name));
-
-                elif name.find("Table") > 0:
-
-                    if data['OPNTable'].find("Y") == 0:
-                        drawOPNTable(slide,
-                                     shape,
-                                     data['OPNTableColumn1']);
-
-                        writeOPNTable(slide, 0, data['OPNTableColumn1']);
-                        writeOPNLinkTable(slide, 0, verifyLinkLanguage(data['OPNTableColumn1Link'], 'OPNTableColumn1Link'));
-                        writeOPNTable(slide, 1, data['OPNTableColumn2']);
-    ##                    writeOPNLinkTable(slide, 1, verifyLinkLanguage(data['OPNTableColumn2Link'], 'OPNTableColumn2Link'));
-                        writeOPNTable(slide, 2, data['OPNTableColumn3']);
-                        writeOPNLinkTable(slide, 2, verifyLinkLanguage(data['OPNTableColumn3Link'], 'OPNTableColumn3Link'));
-                        formatOPNTable(slide)
-
-                    deleteShape(shape);
-
-
-                elif name.find("Link") >= 0:
-                    aux_mask = aux + "Mask";
-                    run.text = "{}".format(data[aux_mask]);
-                    run.hyperlink.address = verifyLinkLanguage(data[aux], name);
-
-                elif name.find("Text") >= 0:
-                    run.text = data[aux];
+                elif name.find("App") >= 0:
+                    sourceImage = "images//app//{}".format(data[name][0:data[name].rfind(".")]);
 
                 else:
-                    max_size = int(run.font.size / 12700);
-                    run.text = data[aux];
-                    shape.text_frame.fit_text(font_file = "ArrowDisplay_Md.ttf", max_size = max_size);
+                    printWARN("WARNING: No folder found for <{}>".format(data[name][0:data[name].rfind(".")]))
+                    
+                if data[name].lower().find("svg") > 0:
+                    convertSVG2PNG(sourceImage);
+                    shape = putImage(slide,
+                                     shape,
+                                     sourceImage,
+                                     "png");
 
-                    for run in shape.text_frame.paragraphs[0].runs:
-                        run.font.name = 'Arrow Display';
+                elif data[name].lower().find("png") > 0:
+                    shape = putImage(slide,
+                                     shape,
+                                     sourceImage,
+                                     "png");
+
+                elif data[name].lower().find("jpg") > 0:
+                    shape = putImage(slide,
+                                 shape,
+                                 sourceImage,
+                                 "jpg");
+                    
+                else:
+                    printWARN("WARNING: No format for <{}> detected".format(name));
+
+            elif name.find("Table") > 0:
+
+                if data['OPNTable'].find("Y") == 0:
+                    drawOPNTable(slide,
+                                 shape,
+                                 data['OPNTableColumn1']);
+
+                    writeOPNTable(slide, 0, data['OPNTableColumn1']);
+                    writeOPNLinkTable(slide, 0, verifyLinkLanguage(data['OPNTableColumn1Link'], 'OPNTableColumn1Link'));
+                    writeOPNTable(slide, 1, data['OPNTableColumn2']);
+##                    writeOPNLinkTable(slide, 1, verifyLinkLanguage(data['OPNTableColumn2Link'], 'OPNTableColumn2Link'));
+                    writeOPNTable(slide, 2, data['OPNTableColumn3']);
+                    writeOPNLinkTable(slide, 2, verifyLinkLanguage(data['OPNTableColumn3Link'], 'OPNTableColumn3Link'));
+                    formatOPNTable(slide)
+
+                deleteShape(shape);
+
+
+            elif name.find("Link") >= 0:
+                aux_mask = aux + "Mask";
+                run.text = "{}".format(data[aux_mask]);
+                run.hyperlink.address = verifyLinkLanguage(data[aux], name);
+
+            elif name.find("Text") >= 0:
+                FMT_Text = data[aux];
+                if FMT_Text.find("__") >= 0:
+                    if FMT_Text.count("__") % 2:
+                        printWARN("WARNING: Bold chars <\"{}\"> are not multiple of 2 in <{}>, proceeding without format".format(dict_fmt['bold'],aux));
+                        run.text = FMT_Text.replace(dict_fmt["bold"], "");
+
+                    else:
+                        print("PROGRESS: Formating <{}>".format(aux));
+                        FMT_Text = func_FMTText(FMT_Text, paragraph, dict_fmt["bold"]);
+
+####                        FMT_Text = FMT_Text.split("__")
+####                        run_list = [run]
+####                        for fmt_len in range(len(FMT_Text)-1):
+####                            run_list.append(paragraph.add_run());
+####
+####                        for run_i, run_text in enumerate(run_list):
+####                            run_text.text = FMT_Text[run_i];
+####
+####                            if run_i == 1:
+####                                run_text.font.bold = True;
+####                            
+##                        FMT_Text = func_FMTText(FMT_Text, "bold");
+##                        bold_index = data[aux].find("__");
+##                    text_list = data[aux].split("__");
+                else:
+                    print("PROGRESS: Proceeding without formating in <{}>".format(aux));
+                    run.text = data[aux];
 
             else:
-                printWARN("WARNING: Object <{}> has an invalid input <{}>".format(aux, data[name]));
-                deleteShape(shape);
-                shape = None;                
+                max_size = int(run.font.size / 12700);
+                run.text = data[aux];
+                shape.text_frame.fit_text(font_file = "ArrowDisplay_Md.ttf", max_size = max_size);
+
+                for run in shape.text_frame.paragraphs[0].runs:
+                    run.font.name = 'Arrow Display';
+
+        else:
+            printWARN("WARNING: Object <{}> has an invalid input <{}>".format(aux, data[name]));
+            deleteShape(shape);
+            shape = None;                
 
     if not shape == None:
         x, y, h, w = getShapeProperties(shape);
