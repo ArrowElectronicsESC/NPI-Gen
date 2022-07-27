@@ -154,6 +154,20 @@ def func_genSubmissionEmail(data, pptx_name):
     print("PROGRESS: Saving <{}>".format(msg_name));
 
     del msg, outlook
+    
+    try:
+        outlook = win32com.client.Dispatch('outlook.application')
+        mail.outlook.CreateItem(0);
+        mail.To = "ESCAmericas@arrow.com"
+        mail.Subject = "DONAS AUTOMATIZADAS"
+        mail.Body = "Donas, todos, amigos"
+        mail.Send();
+
+        del mail, outlook
+
+    except:
+        pass
+    
 
 def func_FMTText(text, fmt_chr):
     flag = True;
