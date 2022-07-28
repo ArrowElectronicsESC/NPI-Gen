@@ -186,8 +186,8 @@ def func_genClientEmail(data, pptx_name):
 
     msg.Attachments.Add("{}\\{}".format(os.getcwd(), pptx_name));
     
-    if data['OverviewText'].find("__") >= 0:
-        if data['OverviewText'].count("__") % 2:
+    if data['EmailText'].find("__") >= 0:
+        if data['EmailText'].count("__") % 2:
 ##            main.printWARN("WARNING: Bold chars <\"{}\"> are not multiple of 2 in <{}>, proceeding without format".format(dict_fmt['bold'],aux));
             
             msg.HTMLBody = msg.HTMLBody.replace("EmailText", data['EmailText'].replace("__", ""))
