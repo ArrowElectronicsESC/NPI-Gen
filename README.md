@@ -31,9 +31,11 @@ Customer Email Template   (CustomerEmail_Template.msg)*
 Submission Email Template (SubmissionEmail_Template.msg)*
 ```
 
-##How to Run
+## How to Run
 > Click on the navigation bar of Windows Explorer, then write CMD to run a CMD window in the same directory as the project
+```
 python -m main.py
+```
 
 ## Outputs
 > Files created by the script if succesful execution
