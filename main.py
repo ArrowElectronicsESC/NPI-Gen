@@ -235,7 +235,7 @@ def verifyLinkLanguage(URL, Header):
     try:
         new_URL = URL.replace("/es-mx/", "/en/");
         if new_URL.find("arrow.com") > 0:
-            print("ARROW LINK AVAAIILAABLE");
+            ##print("ARROW LINK AVAAIILAABLE");
             create_email.flag_arrow_link = True;
             
     except:
@@ -250,7 +250,7 @@ def func_FMTText(text, p, fmt_chr):
     split_text = text.split(fmt_chr);
     runs_list = [p.runs[0]];
     
-    print(text.find(fmt_chr))
+    ##print(text.find(fmt_chr))
     if text.find(fmt_chr) == 0:
         bold_text = True;
         split_text.pop(0);
@@ -258,7 +258,7 @@ def func_FMTText(text, p, fmt_chr):
     else:
         bold_text = False;
 
-    print(split_text)
+    ##print(split_text)
     for i in range(len(split_text)-1):
         runs_list.append(p.add_run());
 
