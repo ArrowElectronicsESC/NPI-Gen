@@ -159,7 +159,7 @@ def func_genSubmissionEmail(data, pptx_name):
         outlook = win32com.client.Dispatch('outlook.application')
         mail.outlook.CreateItem(0);
         mail.To = "ESCAmericas@arrow.com"
-        mail.Subject = "DONAS AUTOMATIZADAS"
+        mail.Subject = "DONAS"
         mail.Body = "Donas, todos, amigos"
         mail.Send();
 
