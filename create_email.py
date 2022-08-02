@@ -208,6 +208,9 @@ def func_genClientEmail(data, pptx_name):
 
         else:
             msg.HTMLBody = msg.HTMLBody.replace("EmailText", func_FMTText(data['EmailText'], "__"))
+
+    else:
+        msg.HTMLBody = msg.HTMLBody.replace("EmailText", data['EmailText']);
    
     msg.HTMLBody = msg.HTMLBody.replace("AdvantagesText", data['AdvantagesText'])
     msg.HTMLBody = msg.HTMLBody.replace("ApplicationText", data['ApplicationText'])
