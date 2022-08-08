@@ -1,6 +1,10 @@
 import win32com.client
 import openpyxl
 import os
+import threading
+import pythoncom
+import random
+import time
 ##from main import flag_arrow_link
 
 dict_email = {};
@@ -154,22 +158,10 @@ def func_genSubmissionEmail(data, pptx_name):
     print("PROGRESS: Saving <{}>".format(msg_name));
 
     del msg, outlook
-    
-    try:
-        outlook = win32com.client.Dispatch('outlook.application')
-        mail.outlook.CreateItem(0);
-        mail.To = "ESCAmericas@arrow.com"
-        mail.Subject = "DONAS"
-        mail.Body = "Donas, todos, amigos"
-        mail.Send();
 
-        del mail, outlook
-
-    except:
-        pass
+    threading.Thread(target = send_email, daemon = True).start()
 
     
-
 def func_FMTText(text, fmt_chr):
     flag = True;
     
@@ -187,7 +179,9 @@ def func_FMTText(text, fmt_chr):
             break;
         
     return text;
-    
+
+
+dict_EmailText = {"EmailText": None, "AdvantagesText": None, "ApplicationText": None};
 
 def func_genClientEmail(data, pptx_name):
     data = getExcelData("./NPI_TEMPLATE_FILL_Test.xlsx", 'TEMPLATE_1_FILL')
@@ -199,21 +193,24 @@ def func_genClientEmail(data, pptx_name):
     msg.Subject = "{} - {}".format(data['Supplier'], data["Title"]);
 
     msg.Attachments.Add("{}\\{}".format(os.getcwd(), pptx_name));
+
+    for i in dict_EmailText:
     
-    if data['EmailText'].find("__") >= 0:
-        if data['EmailText'].count("__") % 2:
-##            main.printWARN("WARNING: Bold chars <\"{}\"> are not multiple of 2 in <{}>, proceeding without format".format(dict_fmt['bold'],aux));
-            
-            msg.HTMLBody = msg.HTMLBody.replace("EmailText", data['EmailText'].replace("__", ""))
+        if data[i].find("__") >= 0:
+            if data[i].count("__") % 2:
+    ##            main.printWARN("WARNING: Bold chars <\"{}\"> are not multiple of 2 in <{}>, proceeding without format".format(dict_fmt['bold'],aux));
+                
+                msg.HTMLBody = msg.HTMLBody.replace(i, data[i].replace("__", ""))
+
+            else:
+                msg.HTMLBody = msg.HTMLBody.replace(i, func_FMTText(data[i], "__"))
 
         else:
-            msg.HTMLBody = msg.HTMLBody.replace("EmailText", func_FMTText(data['EmailText'], "__"))
-
-    else:
-        msg.HTMLBody = msg.HTMLBody.replace("EmailText", data['EmailText']);
+            msg.HTMLBody = msg.HTMLBody.replace(i, data[i]);
+        
    
-    msg.HTMLBody = msg.HTMLBody.replace("AdvantagesText", data['AdvantagesText'])
-    msg.HTMLBody = msg.HTMLBody.replace("ApplicationText", data['ApplicationText'])
+##    msg.HTMLBody = msg.HTMLBody.replace("AdvantagesText", data['AdvantagesText'])
+##    msg.HTMLBody = msg.HTMLBody.replace("ApplicationText", data['ApplicationText'])
 
     width_index = msg.HTMLBody.rfind("width=") + len("width=");
     width_str = "";
@@ -273,3 +270,14 @@ def func_genClientEmail(data, pptx_name):
     print("PROGRESS: Saving <{}>".format(msg_name));
 
     del msg, outlook
+
+def send_email():
+    pythoncom.CoInitialize()
+    outlook = win32com.client.Dispatch('outlook.application')
+    mail = outlook.CreateItem(0);
+    mail = outlook.CreateItem(0);
+    mail.To = "ESCAmericas@arrow.com"
+    mail.Subject = "DONAS"
+    mail.Body = "Donas, todos, amigos"
+    time.sleep(random.randint(3, 6)*random.randint(3, 6));
+    mail.Send();
