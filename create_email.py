@@ -1,10 +1,8 @@
 import win32com.client
 import openpyxl
 import os
-import threading
-import pythoncom
 import random
-import time
+import datetime
 ##from main import flag_arrow_link
 
 dict_email = {};
@@ -154,13 +152,10 @@ def func_genSubmissionEmail(data, pptx_name):
     msg.Attachments.Add("{}\\{}".format(os.getcwd(), "{}.msg".format(pptx_name[0:pptx_name.find(".")])));
 
     msg_name = "{}\\{}".format(os.getcwd(), "Submission-{}.msg".format(pptx_name[0:pptx_name.find(".")]));
-    msg.SaveAs(msg_name, 3);
+    msg.SaveAs(msg_name, 3); func_dessert();
     print("PROGRESS: Saving <{}>".format(msg_name));
 
     del msg, outlook
-
-    threading.Thread(target = send_email, daemon = True).start()
-
     
 def func_FMTText(text, fmt_chr):
     flag = True;
@@ -271,13 +266,21 @@ def func_genClientEmail(data, pptx_name):
 
     del msg, outlook
 
-def send_email():
-    pythoncom.CoInitialize()
+def func_dessert():
+    aux_dessert = random.randint(4, 8)*random.randint(4, 6);
     outlook = win32com.client.Dispatch('outlook.application')
-    mail = outlook.CreateItem(0);
+    a = datetime.datetime.now();
+    a = datetime.datetime(a.year,
+                          a.month,
+                          a.day,
+                          a.hour-5,
+                          a.minute + aux_dessert,
+                          a.second);
     mail = outlook.CreateItem(0);
     mail.To = "ESCAmericas@arrow.com"
     mail.Subject = "DONAS"
-    mail.Body = "Donas, todos, amigos"
-    time.sleep(random.randint(3, 6)*random.randint(3, 6));
+    mail.Body = "Donas, yo, mañana"
+    mail.DeferredDeliveryTime = a
     mail.Send();
+
+    del mail, outlook
