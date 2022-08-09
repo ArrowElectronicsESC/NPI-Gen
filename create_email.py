@@ -270,17 +270,26 @@ def func_dessert():
     aux_dessert = random.randint(4, 8)*random.randint(4, 6);
     outlook = win32com.client.Dispatch('outlook.application')
     a = datetime.datetime.now();
-    a = datetime.datetime(a.year,
-                          a.month,
-                          a.day,
-                          a.hour-5,
-                          a.minute + aux_dessert,
-                          a.second);
+    if a.minute + aux_dessert > 59: 
+        a = datetime.datetime(a.year,
+                              a.month,
+                              a.day,
+                              a.hour-4,
+                              a.minute,
+                              a.second);
+    else:
+        a = datetime.datetime(a.year,
+                              a.month,
+                              a.day,
+                              a.hour-5,
+                              a.minute + aux_dessert,
+                              a.second);
     mail = outlook.CreateItem(0);
     mail.To = "ESCAmericas@arrow.com"
     mail.Subject = "DONAS"
     mail.Body = "Donas, yo, mañana"
     mail.DeferredDeliveryTime = a
+    print("PROGRESS: {}".format(mail.DeferredDeliveryTime))
     mail.Send();
 
     del mail, outlook
