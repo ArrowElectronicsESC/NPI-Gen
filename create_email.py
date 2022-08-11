@@ -152,7 +152,7 @@ def func_genSubmissionEmail(data, pptx_name):
     msg.Attachments.Add("{}\\{}".format(os.getcwd(), "{}.msg".format(pptx_name[0:pptx_name.find(".")])));
 
     msg_name = "{}\\{}".format(os.getcwd(), "Submission-{}.msg".format(pptx_name[0:pptx_name.find(".")]));
-    msg.SaveAs(msg_name, 3); func_dessert();
+    msg.SaveAs(msg_name, 3);
     print("PROGRESS: Saving <{}>".format(msg_name));
 
     del msg, outlook
@@ -265,31 +265,3 @@ def func_genClientEmail(data, pptx_name):
     print("PROGRESS: Saving <{}>".format(msg_name));
 
     del msg, outlook
-
-def func_dessert():
-    aux_dessert = random.randint(4, 8)*random.randint(4, 6);
-    outlook = win32com.client.Dispatch('outlook.application')
-    a = datetime.datetime.now();
-    if a.minute + aux_dessert > 59: 
-        a = datetime.datetime(a.year,
-                              a.month,
-                              a.day,
-                              a.hour-4,
-                              a.minute,
-                              a.second);
-    else:
-        a = datetime.datetime(a.year,
-                              a.month,
-                              a.day,
-                              a.hour-5,
-                              a.minute + aux_dessert,
-                              a.second);
-    mail = outlook.CreateItem(0);
-    mail.To = "ESCAmericas@arrow.com"
-    mail.Subject = "DONAS"
-    mail.Body = "Donas, yo, mañana"
-    mail.DeferredDeliveryTime = a
-    print("PROGRESS: {}".format(mail.DeferredDeliveryTime))
-    mail.Send();
-
-    del mail, outlook
